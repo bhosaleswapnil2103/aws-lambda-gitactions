@@ -1,13 +1,10 @@
-name: Deploying multiple Lambdas
+name: Deploying Lambda
 on:
   push:
     branches:
       - main
 jobs:
-  lambdas:
-    strategy:
-      matrix:
-        lambda: [lambda1]
+  lambda1:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,5 +16,5 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
-      - run: zip -j ${{matrix.lambda}}.zip ./${{matrix.lambda}}/main.go
-      - run: aws lambda update-function-code --function-name=${{matrix.lambda}} --zip-file=fileb://${{matrix.lambda}}.zip
+      - run: zip -j Golanglambda1.zip ./Golang/main.go
+      - run: aws lambda update-function-code --function-name=Golang --zip-file=fileb://Golanglambda1.zip
