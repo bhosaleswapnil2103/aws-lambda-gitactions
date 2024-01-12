@@ -1,61 +1,23 @@
-name: CI
+name: Deploying multiple Lambdas
 on:
- push:
-  branches: 
-    - main
-  paths:
-    - backend/lambda/**
-env:
-  Deploy_Route_Url: ${{secrets.AWS_DEPLOY_DEV_ENV}}
+  push:
+    branches:
+      - main
 jobs:
- build:
-  runs-on: ubuntu-latest
-  strategy: 
-    matrix:
-      go-version: [1.17]
-  steps:
-   - name: check the code
-     uses: actions/Checkout@v2     
-   - name: test
-     run: echo "tested"
-   - name: setup go
-     uses: actions/setup-go@v2
-     with:
-       go-version: ${{ matrix.go-version }}
-     env:
-      GO111MODULE: "on"
-   - name: check setup
-     run: |     
-       go mod init backend-Go-Lambdas
-       go mod tidy      
-   - name: codebuld    
-     run: |
-      env GOOS=linux
-      ##-----Build Module 1---------##
-      go build  'backend/lambda/Module1/goAPI1.go'
-      go build  'backend/lambda/Module2/goAPI2.go'
-      go build  'backend/lambda/Module3/goAPI3.go'
-      go build  'backend/lambda/Module4/goAPI4.go'
-      go build  'backend/lambda/Module5/goAPI5.go'
-      
-      #--Zip the Build Files-----#
-      zip goAPI1.zip goAPI1
-      zip goAPI2.zip goAPI2
-      zip goAPI3.zip goAPI3
-      zip goAPI4.zip goAPI4
-      zip goAPI5.zip goAPI5
-      
-   - name: Configure AWS Credentials
-     uses: aws-actions/configure-aws-credentials@v1
-     with:
+  lambdas:
+    strategy:
+      matrix:
+        lambda: [lambda1,lambda2]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: ${{secrets.AWS_DEFAULT_REGION}}          
-   - name: deploy
-     run: |
-       ######-----------DEPLOY ZIP Files------------------
-       aws lambda update-function-code --function-name goAPI1 --region ap-south-1 --zip-file fileb://goAPI1.zip
-       aws lambda update-function-code --function-name goAPI2 --region ap-south-1 --zip-file fileb://goAPI2.zip
-       aws lambda update-function-code --function-name goAPI3 --region ap-south-1 --zip-file fileb://goAPI3.zip
-       aws lambda update-function-code --function-name goAPI4 --region ap-south-1 --zip-file fileb://goAPI4.zip
-       aws lambda update-function-code --function-name goAPI5 --region ap-south-1 --zip-file fileb://goAPI5.zip
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      - run: zip -j ${{matrix.lambda}}.zip ./${{matrix.lambda}}/index.js
+      - run: aws lambda update-function-code --function-name=${{matrix.lambda}} --zip-file=fileb://${{matrix.lambda}}.zip
