@@ -7,7 +7,7 @@ jobs:
   lambdas:
     strategy:
       matrix:
-        lambda: [lambda1,lambda2]
+        lambda: [lambda1]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
