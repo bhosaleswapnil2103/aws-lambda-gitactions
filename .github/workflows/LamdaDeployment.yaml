@@ -12,7 +12,6 @@ jobs:
       - name: Set up Go        
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-      - name: Build
-        working-directory: ./backend/lambda/Golang
-        run:  go build  'backend/lambda/Golang/main.go'   
+          node-version: 16  
+      - name: Build Golang code
+        run: go build -o main ./aws-lambda-gitactions       
