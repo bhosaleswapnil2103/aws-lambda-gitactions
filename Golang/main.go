@@ -8,13 +8,12 @@ import (
 )
 
 func homePage(w http.ResponseWriter, r *http.Request){
-    fmt.Fprintf(w, "Welcome to the HomePage!")
+    fmt.Fprintf(w, "Welcome Swapnil...")
     fmt.Println("Endpoint Hit: homePage")
 }
 
 func handleRequests() {
     http.HandleFunc("/", homePage)
-    log.Fatal(http.ListenAndServe(":10000", nil))
 }
 
 func main() {
