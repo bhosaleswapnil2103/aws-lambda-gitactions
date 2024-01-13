@@ -14,5 +14,5 @@ jobs:
         with:
           node-version: 16
       - name: Build
-        working-directory: ./backend/lambda/Golang
+        working-directory: ./backend/lambda/Golang/main.go
         run:  go build  'backend/lambda/Golang/main.go' 
