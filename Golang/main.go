@@ -1,31 +1,23 @@
 package main
 
 import (
-    "fmt"
-
-    "github.com/aws/aws-lambda-go/lambda"
+	"context"
+	"fmt"
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
-// Request represents the requested object
-type Request struct {
-    ID    int    `json:"ID"`
-    Value string `json:"Value"`
+type MyEvent struct {
+	Name string `json:"name"`
 }
 
-// Response represents the Response object
-type Response struct {
-    Message string `json:"Message"`
-    Ok      bool   `json:"Ok"`
-}
-
-// Handler represents the Handler of lambda
-func Handler(request Request) (Response, error) {
-    return Response{
-        Message: fmt.Sprint("Process Request Id %f", request.ID),
-        Ok:      true,
-    }, nil
+func HandleRequest(ctx context.Context, event *MyEvent) (*string, error) {
+	if event == nil {
+		return nil, fmt.Errorf("received nil event")
+	}
+	message := fmt.Sprintf("Hello %s!", event.Name)
+	return &message, nil
 }
 
 func main() {
-    lambda.Start(Handler)
+	lambda.Start(HandleRequest)
 }
