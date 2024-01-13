@@ -2,44 +2,17 @@ name: Deploying Lambda
 on:
   push:
     branches:
-      - main    
+      - main
 jobs:
- build:
-  runs-on: ubuntu-latest
-  strategy: 
-    matrix:
-      go-version: [1.17]
-  steps:
-   - name: check the code
-     uses: actions/Checkout@v2     
-   - name: test
-     run: echo "tested"
-   - name: setup go
-     uses: actions/setup-go@v2
-     with:
-       go-version: ${{ matrix.go-version }}
-     env:
-      GO111MODULE: "on"
-   - name: check setup
-     run: |     
-       go mod init backend-Go-Lambdas
-       go mod tidy      
-   - name: codebuld    
-     run: |
-      env GOOS=linux
-      ##-----Build Module 1---------##
-      go build  'backend/lambda/Golang/main.go'
-      
-      #--Zip the Build Files-----#
-      zip Golang.zip Golang
-      
-   - name: Configure AWS Credentials
-     uses: aws-actions/configure-aws-credentials@v1
-     with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: us-east-1          
-   - name: deploy
-     run: |
-       ######-----------DEPLOY ZIP Files------------------
-       aws lambda update-function-code --function-name Golang --region us-east-1  --zip-file fileb://Golang.zip
+  lambda1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout      
+        uses: actions/checkout@v3
+      - name: Set up Go        
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Build
+        working-directory: ./backend/lambda/Golang
+        run:  go build  'backend/lambda/Golang/main.go' 
