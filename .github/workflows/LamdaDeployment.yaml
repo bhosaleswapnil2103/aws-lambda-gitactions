@@ -1,22 +1,18 @@
-name: Deploy AWS Lambda
-
+name: Deploying Lambda
 on:
   push:
     branches:
       - main
-
 jobs:
-  deploy:
+  lambda1:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - name: Checkout      
+        uses: actions/checkout@v3
+      - name: Set up Go        
+        uses: actions/setup-node@v3
         with:
-          go-version: 1.17
-
-      - name: Build Golang code
-        run: go build -o main ./my-function
+          node-version: 16
+      - name: Build
+        working-directory: ./backend/lambda/Golang
+        run:  go build  'backend/lambda/Golang/main.go'   
