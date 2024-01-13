@@ -12,6 +12,19 @@ jobs:
       - name: Set up Go        
         uses: actions/setup-node@v3
         with:
-          node-version: 16  
-      - name: Build Golang code
-        run: go build -o main ./aws-lambda-gitactions       
+          node-version: 16
+      - name: Build
+        working-directory: ./backend/lambda/Golang
+        run:  go build  'backend/lambda/Golang/main.go'   
+      - name: Zip
+        working-directory: ./lambda/Golang
+        run: zip -j deploy.zip main    
+      - name: Configure AWS Credentials                 
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Upload Zip
+        working-directory: ./lambda/Golang
+        run: aws lambda update-function-code --function-name Golang --zip-file fileb://deploy.zip
