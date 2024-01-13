@@ -2,9 +2,7 @@ name: Deploying Lambda
 on:
   push:
     branches:
-      - main
-    paths:
-      - backend/lambda/**      
+      - main    
 jobs:
  build:
   runs-on: ubuntu-latest
