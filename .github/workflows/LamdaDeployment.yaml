@@ -1,10 +1,8 @@
-name: CI
+name: Deploying Lambda
 on:
- push:
-  branches: 
-    - main
-  paths:
-    - backend/lambda/**
+  push:
+    branches:
+      - main
 jobs:
  build:
   runs-on: ubuntu-latest
