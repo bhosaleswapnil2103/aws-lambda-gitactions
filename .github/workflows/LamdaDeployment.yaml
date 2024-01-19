@@ -37,4 +37,4 @@ jobs:
         run: |
           npx ncc build index.ts
           zip -j deploy.zip ./dist/*
-          aws lambda update-function-code --function-name=swaplambda --zip-file=fileb://deploy.zip
+          aws lambda update-function-code --function-name=arn:aws:lambda:us-east-2:537577558811:function:swaplambda --zip-file=fileb://deploy.zip
